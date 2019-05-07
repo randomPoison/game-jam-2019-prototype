@@ -1,0 +1,11 @@
+package grid;
+
+type Coordinate {
+    int64 col = 1;
+    int64 row = 2;
+}
+
+component Position {
+    id = 199998;
+    Coordinate pos = 1;
+}
