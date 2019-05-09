@@ -14,8 +14,8 @@ namespace BlankProject
     {
         public const string WorkerType = "AndroidClient";
 
-        [SerializeField] private string ipAddress;
-        [SerializeField] private bool shouldConnectLocally;
+        [SerializeField] private string ipAddress = null;
+        [SerializeField] private bool shouldConnectLocally = false;
 
         private async void Start()
         {
@@ -34,17 +34,18 @@ namespace BlankProject
 
         protected override string GetHostIp()
         {
-#if UNITY_ANDROID
+            if (Application.platform != RuntimePlatform.Android)
+            {
+                throw new PlatformNotSupportedException(
+                    $"{nameof(AndroidClientWorkerConnector)} can only be used for the Android platform. Please check your build settings.");
+            }
+
             if (!string.IsNullOrEmpty(ipAddress))
             {
                 return ipAddress;
             }
 
             return RuntimeConfigDefaults.ReceptionistHost;
-#else
-            throw new PlatformNotSupportedException(
-                $"{nameof(AndroidClientWorkerConnector)} can only be used for the Android platform. Please check your build settings.");
-#endif
         }
     }
 }
