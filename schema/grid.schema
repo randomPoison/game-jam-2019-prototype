@@ -1,7 +1,10 @@
 package beta_apart_uranus;
 
 type GridCoordinate {
+    // The horizontal offset from the origin (akin to the X coordinate).
     int64 col = 1;
+
+    // The diagonal offset from the origin (akin to the Y coordinate, but at an angle).
     int64 row = 2;
 }
 
