@@ -1,0 +1,7 @@
+package beta_apart_uranus;
+
+component Drone {
+    id = 98938715;
+
+    uint32 owner = 1;
+}

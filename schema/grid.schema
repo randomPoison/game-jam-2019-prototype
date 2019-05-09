@@ -1,11 +1,11 @@
-package grid;
+package beta_apart_uranus;
 
-type Coordinate {
+type GridCoordinate {
     int64 col = 1;
     int64 row = 2;
 }
 
-component Position {
+component GridPosition {
     id = 199998;
-    Coordinate pos = 1;
+    GridCoordinate pos = 1;
 }
