@@ -2,7 +2,7 @@
 using Improbable.Gdk.PlayerLifecycle;
 using Improbable.Worker.CInterop;
 
-namespace BlankProject
+namespace BetaApartUranus
 {
     public class UnityClientConnector : DefaultWorkerConnector
     {

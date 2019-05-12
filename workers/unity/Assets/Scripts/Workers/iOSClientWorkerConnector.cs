@@ -7,7 +7,7 @@ using System;
 using Improbable.Gdk.PlayerLifecycle;
 using UnityEngine;
 
-namespace BlankProject
+namespace BetaApartUranus
 {
     public class iOSClientWorkerConnector : MobileWorkerConnector
     {

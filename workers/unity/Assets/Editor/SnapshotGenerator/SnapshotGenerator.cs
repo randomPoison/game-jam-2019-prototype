@@ -4,7 +4,7 @@ using Improbable.PlayerLifecycle;
 using UnityEngine;
 using Snapshot = Improbable.Gdk.Core.Snapshot;
 
-namespace BlankProject.Editor
+namespace BetaApartUranus.Editor
 {
     internal static class SnapshotGenerator
     {

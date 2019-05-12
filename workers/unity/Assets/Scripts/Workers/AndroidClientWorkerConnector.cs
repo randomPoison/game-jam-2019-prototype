@@ -8,7 +8,7 @@ using System;
 using UnityEngine;
 
 
-namespace BlankProject
+namespace BetaApartUranus
 {
     public class AndroidClientWorkerConnector : MobileWorkerConnector
     {

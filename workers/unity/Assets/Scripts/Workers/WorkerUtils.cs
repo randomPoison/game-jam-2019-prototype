@@ -1,4 +1,4 @@
-﻿namespace BlankProject
+﻿namespace BetaApartUranus
 {
     public static class WorkerUtils
     {

@@ -1,17 +1,14 @@
-﻿using BetaApartUranus;
-using Improbable;
+﻿using Improbable;
 using Improbable.Gdk.Core;
 using UnityEngine;
 
-namespace BlankProject
+namespace BetaApartUranus
 {
     public static class EntityTemplates
     {
-        public static EntityTemplate Drone(GridCoordinate position, uint playerId)
+        public static EntityTemplate Drone(GridCoordinate position, string playerId)
         {
-            // Create a HealthPickup component snapshot which is initially active and grants "heathValue" on pickup.
-            var droneComponent = new Drone.Snapshot(playerId);
-            var gridPositionComponent = new GridPosition.Snapshot(position);
+            // Calculate the world position based off the grid position.
             var worldPosition = new Coordinates()
             {
                 X = Mathf.Sqrt(3f) * position.Col + Mathf.Sqrt(3f) / 2f * position.Row,
@@ -20,11 +17,12 @@ namespace BlankProject
             };
 
             var entityTemplate = new EntityTemplate();
+            entityTemplate.AddComponent(new Drone.Snapshot(playerId), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new GridPosition.Snapshot(position), WorkerUtils.UnityGameLogic);
+
             entityTemplate.AddComponent(new Position.Snapshot(worldPosition), WorkerUtils.UnityGameLogic);
-            entityTemplate.AddComponent(new Metadata.Snapshot("HealthPickup"), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Metadata.Snapshot("Drone"), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
-            entityTemplate.AddComponent(droneComponent, WorkerUtils.UnityGameLogic);
-            entityTemplate.AddComponent(gridPositionComponent, WorkerUtils.UnityGameLogic);
             entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient);
             entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
