@@ -1,5 +1,5 @@
 {
-    "name": "BlankProject",
+    "name": "BetaApartUranus.Editor",
     "references": [
         "Improbable.Gdk.Core",
         "Improbable.Gdk.Generated",
@@ -10,10 +10,16 @@
         "Improbable.Gdk.PlayerLifecycle",
         "Unity.Entities",
         "Unity.Entities.Hybrid",
-        "Unity.Mathematics"
+        "Unity.Mathematics",
+        "Improbable.Gdk.GameObjectCreation"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": false
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
 }
