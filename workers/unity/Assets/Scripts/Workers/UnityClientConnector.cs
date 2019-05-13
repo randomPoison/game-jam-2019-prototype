@@ -1,4 +1,5 @@
 ﻿using Improbable.Gdk.Core;
+using Improbable.Gdk.GameObjectCreation;
 using Improbable.Gdk.PlayerLifecycle;
 using Improbable.Worker.CInterop;
 
@@ -6,7 +7,7 @@ namespace BetaApartUranus
 {
     public class UnityClientConnector : DefaultWorkerConnector
     {
-        public const string WorkerType = "UnityClient";
+        public const string WorkerType = WorkerUtils.UnityClient;
         
         private async void Start()
         {
@@ -16,6 +17,7 @@ namespace BetaApartUranus
         protected override void HandleWorkerConnectionEstablished()
         {
             PlayerLifecycleHelper.AddClientSystems(Worker.World);
+            GameObjectCreationHelper.EnableStandardGameObjectCreation(Worker.World);
         }
 
         protected override string SelectDeploymentName(DeploymentList deployments)

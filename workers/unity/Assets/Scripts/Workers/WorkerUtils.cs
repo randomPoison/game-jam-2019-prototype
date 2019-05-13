@@ -7,6 +7,5 @@
         public const string iOSClient = "iOSClient";
 
         public const string UnityGameLogic = "UnityGameLogic";
-        public const string SimulatedPlayerCoordinator = "SimulatedPlayerCoordinator";
     }
 }

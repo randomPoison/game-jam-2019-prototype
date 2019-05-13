@@ -5,7 +5,7 @@ namespace BetaApartUranus
 {
     public class UnityGameLogicConnector : DefaultWorkerConnector
     {
-        public const string WorkerType = "UnityGameLogic";
+        public const string WorkerType = WorkerUtils.UnityGameLogic;
 
         private async void Start()
         {
