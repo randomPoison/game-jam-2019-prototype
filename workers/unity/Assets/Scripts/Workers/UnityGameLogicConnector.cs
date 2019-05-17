@@ -1,4 +1,6 @@
-﻿using Improbable.Gdk.Core;
+﻿using Improbable;
+using Improbable.Gdk.Core;
+using Improbable.Gdk.GameObjectCreation;
 using Improbable.Gdk.PlayerLifecycle;
 
 namespace BetaApartUranus
@@ -21,7 +23,18 @@ namespace BetaApartUranus
 
         private static EntityTemplate CreatePlayerEntityTemplate(string workerId, byte[] serializedArguments)
         {
-            return EntityTemplates.Drone(new GridCoordinate(), workerId);
+            var clientAttribute = EntityTemplate.GetWorkerAccessAttribute(workerId);
+            var serverAttribute = WorkerType;
+
+            var template = new EntityTemplate();
+            template.AddComponent(new Position.Snapshot(), clientAttribute);
+            template.AddComponent(new Metadata.Snapshot("Player"), serverAttribute);
+            PlayerLifecycleHelper.AddPlayerLifecycleComponents(template, workerId, serverAttribute);
+
+            template.SetReadAccess(UnityClientConnector.WorkerType, serverAttribute);
+            template.SetComponentWriteAccess(EntityAcl.ComponentId, serverAttribute);
+
+            return template;
         }
     }
 }

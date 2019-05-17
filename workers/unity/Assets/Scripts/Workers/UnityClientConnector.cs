@@ -8,7 +8,7 @@ namespace BetaApartUranus
     public class UnityClientConnector : DefaultWorkerConnector
     {
         public const string WorkerType = WorkerUtils.UnityClient;
-        
+
         private async void Start()
         {
             await Connect(WorkerType, new ForwardingDispatcher()).ConfigureAwait(false);
