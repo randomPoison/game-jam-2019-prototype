@@ -1,0 +1,6 @@
+﻿namespace BetaApartUranus
+{
+    public class #SCRIPTNAME#
+    {
+    }
+}
