@@ -1,0 +1,10 @@
+package beta_apart_uranus;
+
+type SpawnDroneRequest {}
+type SpawnDroneResponse {}
+
+component SpawnController {
+    id = 280146481;
+
+    command SpawnDroneResponse spawn_drone(SpawnDroneRequest);
+}
