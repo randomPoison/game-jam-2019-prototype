@@ -12,8 +12,8 @@ namespace BetaApartUranus
             var worldPosition = new Coordinates()
             {
                 X = Mathf.Sqrt(3f) * position.Col + Mathf.Sqrt(3f) / 2f * position.Row,
-                Y = 3f / 2f * position.Row,
-                Z = 0f,
+                Y = 0f,
+                Z = 3f / 2f * position.Row,
             };
 
             var entityTemplate = new EntityTemplate();
