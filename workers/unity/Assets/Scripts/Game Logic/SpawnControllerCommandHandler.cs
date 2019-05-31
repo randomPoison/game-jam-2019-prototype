@@ -16,7 +16,7 @@ namespace BetaApartUranus
         private void OnSpawnDroneRequest(SpawnController.SpawnDrone.ReceivedRequest request)
         {
             Debug.Log("Handling spawn drone request!");
-            _commandReceiver.SendSpawnDroneResponse(new SpawnController.SpawnDrone.Response());
+            _commandReceiver.SendSpawnDroneResponse(request.RequestId, new SpawnDroneResponse());
         }
     }
 }

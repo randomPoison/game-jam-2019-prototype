@@ -19,6 +19,7 @@ namespace BetaApartUranus
         {
             Worker.World.GetOrCreateManager<MetricSendSystem>();
             PlayerLifecycleHelper.AddServerSystems(Worker.World);
+            GameObjectCreationHelper.EnableStandardGameObjectCreation(Worker.World);
         }
 
         private static EntityTemplate CreatePlayerEntityTemplate(string workerId, byte[] serializedArguments)

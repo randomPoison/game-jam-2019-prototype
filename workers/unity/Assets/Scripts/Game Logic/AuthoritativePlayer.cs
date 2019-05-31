@@ -1,4 +1,6 @@
-﻿using Improbable.Gdk.Subscriptions;
+﻿using Improbable.Gdk.Core;
+using Improbable.Gdk.Subscriptions;
+using Improbable.Worker.CInterop;
 using UnityEngine;
 
 namespace BetaApartUranus
@@ -12,10 +14,20 @@ namespace BetaApartUranus
         {
             if (_commandSender != null)
             {
-                _commandSender.SendSpawnDroneCommand(new SpawnController.SpawnDrone.Request(), response =>
-                {
-                    Debug.Log("Got a response!");
-                });
+                _commandSender.SendSpawnDroneCommand(
+                    new EntityId(2), // TODO: Don't hard-code the entity ID.
+                    new SpawnDroneRequest(),
+                    response =>
+                    {
+                        if (response.StatusCode == StatusCode.Success)
+                        {
+                            Debug.Log("Got a response!");
+                        }
+                        else
+                        {
+                            Debug.Log($"Spawn drone request failed, status: {response.StatusCode}, message: {response.Message}");
+                        }
+                    });
             }
             else
             {
