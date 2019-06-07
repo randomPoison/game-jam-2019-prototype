@@ -18,6 +18,9 @@ namespace BetaApartUranus
         [SerializeField]
         private GameObject _nonAuthPlayerPrefab = null;
 
+        [SerializeField]
+        private GameObject _clientControllerPrefab = null;
+
         private async void Start()
         {
             await Connect(WorkerType, new ForwardingDispatcher()).ConfigureAwait(false);
@@ -44,6 +47,9 @@ namespace BetaApartUranus
                 Worker.World,
                 entityPipeline,
                 gameObject);
+
+            // Spawn the client controller once we've connected to the server.
+            GameObject.Instantiate(_clientControllerPrefab);
         }
 
         protected override string SelectDeploymentName(DeploymentList deployments)
