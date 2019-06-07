@@ -10,6 +10,8 @@ namespace BetaApartUranus
     {
         public const string WorkerType = WorkerUtils.UnityClient;
 
+        [Header("Player Prefabs")]
+
         [SerializeField]
         private GameObject _authPlayerPrefab = null;
 

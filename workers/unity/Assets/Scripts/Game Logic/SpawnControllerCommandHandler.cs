@@ -24,8 +24,8 @@ namespace BetaApartUranus
 
             // Generate a random starting point for the drone.
             var position = new GridCoordinate(
-                Random.Range(-20, 20),
-                Random.Range(-20, 20));
+                Random.Range(-10, 10),
+                Random.Range(-10, 10));
 
             // Create an entity for the drone, and once it's been made, respond to the player.
             //
