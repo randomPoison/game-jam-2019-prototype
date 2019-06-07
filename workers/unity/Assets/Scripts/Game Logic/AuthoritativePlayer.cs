@@ -21,7 +21,7 @@ namespace BetaApartUranus
                     {
                         if (response.StatusCode == StatusCode.Success)
                         {
-                            Debug.Log("Got a response!");
+                            Debug.Log("Successfully spawned initial drone for player");
                         }
                         else
                         {
