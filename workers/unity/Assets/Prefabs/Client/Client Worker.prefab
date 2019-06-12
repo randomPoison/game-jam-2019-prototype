@@ -168,7 +168,7 @@ GameObject:
   - component: {fileID: 5855041048410994576}
   - component: {fileID: 5855041048410994577}
   m_Layer: 0
-  m_Name: ClientWorker
+  m_Name: Client Worker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -227,41 +227,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
         type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 412.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 272
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -10
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.7071068
-      objectReference: {fileID: 0}
-    - target: {fileID: 7659731302643661272, guid: 6f1120196e2edf14d9165a52aee3ab53,
-        type: 3}
       propertyPath: m_RootOrder
       value: 0
       objectReference: {fileID: 0}
@@ -298,7 +263,7 @@ PrefabInstance:
     - target: {fileID: 8624138161197854655, guid: d260ba0755dd8ac4babba27271130b2c,
         type: 3}
       propertyPath: m_Name
-      value: Canvas
+      value: Main Canvas
       objectReference: {fileID: 0}
     - target: {fileID: 7827685062755706211, guid: d260ba0755dd8ac4babba27271130b2c,
         type: 3}

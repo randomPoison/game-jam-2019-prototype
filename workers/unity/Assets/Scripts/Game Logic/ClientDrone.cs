@@ -8,10 +8,19 @@ namespace BetaApartUranus
     /// </summary>
     public class ClientDrone : MonoBehaviour, IPointerDownHandler
     {
+        private ClientController _clientController;
+
+        #region Unity Lifecycle Methods
+        private void Awake()
+        {
+            _clientController = FindObjectOfType<ClientController>();
+        }
+        #endregion
+
         #region IPointerDownHandler
         public void OnPointerDown(PointerEventData eventData)
         {
-            ClientController.SelectDrone(this);
+            _clientController.SelectDrone(this);
         }
         #endregion
     }
