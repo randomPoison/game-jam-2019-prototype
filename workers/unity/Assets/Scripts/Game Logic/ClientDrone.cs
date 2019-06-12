@@ -28,12 +28,17 @@ namespace BetaApartUranus
         private UnityClientConnector _connector;
         private ClientController _clientController;
 
-        private bool IsOwned
+        public bool IsOwned
         {
             // TODO: Is there a better way to check if the drone is owned by the
             // current worker? It seems odd to have a reference to the connector
             // object just to fetch the worker ID.
-            get { return _droneReader.Data.Owner == _connector.Worker.WorkerId; }
+            get { return Owner == _connector.Worker.WorkerId; }
+        }
+
+        public string Owner
+        {
+            get { return _droneReader.Data.Owner; }
         }
 
         private void OnSelectedDroneChanged(ClientDrone selected)
