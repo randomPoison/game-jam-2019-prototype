@@ -1,4 +1,5 @@
-﻿using Singleton;
+﻿using System;
+using Singleton;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -10,10 +11,14 @@ namespace BetaApartUranus
 
         private ClientDrone _selectedDrone = null;
 
+        public event Action<ClientDrone> SelectedDroneChanged;
+
         public void SelectDrone(ClientDrone drone)
         {
             _selectedDrone = drone;
             _canvas.SetActiveDrone(drone);
+
+            SelectedDroneChanged?.Invoke(drone);
         }
 
         #region Unity Lifecycle Methods

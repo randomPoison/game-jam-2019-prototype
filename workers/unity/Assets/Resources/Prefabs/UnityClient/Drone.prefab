@@ -46,6 +46,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _playerMaterial: {fileID: 2100000, guid: 8daa1f07dbd29ec4789907625d37bc74, type: 2}
   _otherMaterial: {fileID: 2100000, guid: 289b74ed83e2741409e3ab9276ff1969, type: 2}
+  _selectedMaterial: {fileID: 2100000, guid: 19ec38638f394d34cbd7503136782706, type: 2}
 --- !u!1 &8269616573929672904
 GameObject:
   m_ObjectHideFlags: 0

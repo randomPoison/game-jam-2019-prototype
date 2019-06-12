@@ -17,12 +17,36 @@ namespace BetaApartUranus
         [Tooltip("The material to use when the drone is owned by another player.")]
         private Material _otherMaterial = null;
 
+        [SerializeField]
+        [Tooltip("The material to use when the drone is selected.")]
+        private Material _selectedMaterial = null;
+
         [Require]
         private DroneReader _droneReader = null;
 
         private MeshRenderer _display;
         private UnityClientConnector _connector;
         private ClientController _clientController;
+
+        private bool IsOwned
+        {
+            // TODO: Is there a better way to check if the drone is owned by the
+            // current worker? It seems odd to have a reference to the connector
+            // object just to fetch the worker ID.
+            get { return _droneReader.Data.Owner == _connector.Worker.WorkerId; }
+        }
+
+        private void OnSelectedDroneChanged(ClientDrone selected)
+        {
+            if (this == selected)
+            {
+                _display.sharedMaterial = _selectedMaterial;
+            }
+            else
+            {
+                _display.sharedMaterial = IsOwned ? _playerMaterial : _otherMaterial;
+            }
+        }
 
         #region Unity Lifecycle Methods
         private void Awake()
@@ -34,13 +58,17 @@ namespace BetaApartUranus
 
         private void Start()
         {
-            // TODO: Is there a better way to check if the drone is owned by the
-            // current worker? It seems odd to have a reference to the connector
-            // object just to fetch the worker ID.
-            if (_droneReader.Data.Owner == _connector.Worker.WorkerId)
+            _clientController.SelectedDroneChanged += OnSelectedDroneChanged;
+
+            if (IsOwned)
             {
                 _display.sharedMaterial = _playerMaterial;
             }
+        }
+
+        private void OnDestroy()
+        {
+            _clientController.SelectedDroneChanged -= OnSelectedDroneChanged;
         }
         #endregion
 
