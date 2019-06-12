@@ -1,13 +1,17 @@
 ﻿using System;
 using Singleton;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 namespace BetaApartUranus
 {
     public class ClientController : MonoBehaviourSingleton<ClientController>
     {
+        [SerializeField]
+        private GameObject _cursorPrefab = null;
+
+        private Camera _camera = null;
         private MainCanvasController _canvas = null;
+        private GameObject _cursor = null;
 
         private ClientDrone _selectedDrone = null;
 
@@ -27,7 +31,22 @@ namespace BetaApartUranus
             base.Awake();
 
             // Initialize references to objects in the scene.
+            _camera = FindObjectOfType<Camera>();
             _canvas = FindObjectOfType<MainCanvasController>();
+            _cursor = Instantiate(_cursorPrefab);
+        }
+
+        private void Start()
+        {
+        }
+
+        private void Update()
+        {
+            var viewportPosition = Input.mousePosition;
+            viewportPosition.z = _camera.transform.position.y;
+            var worldPosition = _camera.ScreenToWorldPoint(viewportPosition);
+
+            _cursor.transform.position = worldPosition;
         }
         #endregion
     }
