@@ -12,6 +12,7 @@ namespace BetaApartUranus
         private Camera _camera = null;
         private MainCanvasController _canvas = null;
         private GameObject _cursor = null;
+        private Grid _grid = null;
 
         private ClientDrone _selectedDrone = null;
 
@@ -33,6 +34,7 @@ namespace BetaApartUranus
             // Initialize references to objects in the scene.
             _camera = FindObjectOfType<Camera>();
             _canvas = FindObjectOfType<MainCanvasController>();
+            _grid = FindObjectOfType<Grid>();
             _cursor = Instantiate(_cursorPrefab);
         }
 
@@ -42,11 +44,14 @@ namespace BetaApartUranus
 
         private void Update()
         {
+            // TODO: Use a better source of pointer input than Input.mousePosition.
             var viewportPosition = Input.mousePosition;
             viewportPosition.z = _camera.transform.position.y;
             var worldPosition = _camera.ScreenToWorldPoint(viewportPosition);
 
-            _cursor.transform.position = worldPosition;
+            // Snap the cursor display to the cell the mouse is over.
+            var gridPosition = _grid.WorldToCell(worldPosition);
+            _cursor.transform.position = _grid.CellToWorld(gridPosition);
         }
         #endregion
     }
