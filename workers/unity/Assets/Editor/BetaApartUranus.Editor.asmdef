@@ -1,11 +1,11 @@
 {
-    "name": "BlankProject.Editor",
+    "name": "BetaApartUranus.Editor",
     "references": [
-        "BetaApartUranus.Editor",
-        "Improbable.Gdk.BuildSystem",
-        "Improbable.Gdk.Core",
-        "Improbable.Gdk.Generated",
-        "Unity.Entities"
+        "GUID:38b6a488ea20e4a35a00e50b07444806",
+        "GUID:362d7e6bb72a81a44847e076314c68cb",
+        "GUID:edb3612c44ad0d24988d387581fd5fbe",
+        "GUID:09d0b0c8e43bd56409834b050a8a2ceb",
+        "GUID:734d92eba21c94caba915361bd5ac177"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [
