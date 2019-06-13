@@ -39,31 +39,31 @@ namespace HexTools
         /// </param>
         public CubeCoordinate Round()
         {
-            var rx = Mathf.Round(Q);
-            var ry = Mathf.Round(R);
-            var rz = Mathf.Round(S);
+            var q = Mathf.Round(Q);
+            var r = Mathf.Round(R);
+            var s = Mathf.Round(S);
 
-            var x_diff = Mathf.Abs(rx - Q);
-            var y_diff = Mathf.Abs(ry - R);
-            var z_diff = Mathf.Abs(rz - S);
+            var qDiff = Mathf.Abs(q - Q);
+            var rDiff = Mathf.Abs(r - R);
+            var sDiff = Mathf.Abs(s - S);
 
-            if (x_diff > y_diff && x_diff > z_diff)
+            if (qDiff > rDiff && qDiff > sDiff)
             {
-                rx = -ry - rz;
+                q = -r - s;
             }
-            else if (y_diff > z_diff)
+            else if (rDiff > sDiff)
             {
-                ry = -rx - rz;
+                r = -q - s;
             }
             else
             {
-                rz = -rx - ry;
+                s = -q - r;
             }
 
             return new CubeCoordinate(
-                Mathf.RoundToInt(rx),
-                Mathf.RoundToInt(ry),
-                Mathf.RoundToInt(rz));
+                Mathf.RoundToInt(q),
+                Mathf.RoundToInt(r),
+                Mathf.RoundToInt(s));
         }
 
         public static implicit operator FractionalCubeCoordinate(FractionalAxialCoordinate axial)

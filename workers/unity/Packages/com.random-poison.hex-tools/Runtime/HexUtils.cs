@@ -10,8 +10,8 @@ namespace HexTools
         /// </summary>
         public static FractionalAxialCoordinate WorldToFractional(Vector2 worldPos)
         {
-            var q = (Mathf.Sqrt(3f) / 3f) * worldPos.x - (1f / 3f) * worldPos.y;
-            var r = (2f / 3f) * worldPos.y;
+            var q = worldPos.x - (1f / Mathf.Sqrt(3f)) * worldPos.y;
+            var r = (2f / Mathf.Sqrt(3f)) * worldPos.y;
             return new FractionalAxialCoordinate(q, r);
         }
 
@@ -27,13 +27,29 @@ namespace HexTools
             return WorldToFractional(worldPos).Round();
         }
 
+        /// <summary>
+        /// Converts the specifid axial coordinate to world space.
+        /// </summary>
+        ///
+        /// <remarks>
+        /// Assumes a pointy-top grid orientation with a cell width of 1.
+        /// </remarks>
         public static Vector2 GridToWorld(AxialCoordinate gridPos)
         {
-            return new Vector2()
+            var Q_BASIS = new Vector2
             {
-                x = Mathf.Sqrt(3f) * gridPos.Q + Mathf.Sqrt(3f) / 2f * gridPos.R,
-                y = 3f / 2f * gridPos.R,
+                x = 1f,
+                y = 0f,
             };
+
+            var R_BASIS = new Vector2
+            {
+                x = 0.5f,
+                y = Mathf.Sqrt(3) / 2f,
+            };
+
+
+            return Q_BASIS * gridPos.Q + R_BASIS * gridPos.R;
         }
     }
 }
