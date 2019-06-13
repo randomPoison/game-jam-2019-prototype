@@ -4,7 +4,8 @@ type GridCoordinate {
     // The horizontal offset from the origin (akin to the X coordinate).
     int64 col = 1;
 
-    // The diagonal offset from the origin (akin to the Y coordinate, but at an angle).
+    // The diagonal offset from the origin (akin to the Y coordinate, but at an angle
+    // going up and to the right).
     int64 row = 2;
 }
 

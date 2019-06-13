@@ -24,15 +24,18 @@ namespace BetaApartUranus
         [Require]
         private DroneReader _droneReader = null;
 
+        // Components on this object.
         private MeshRenderer _display;
+
+        // Global state objects.
         private UnityClientConnector _connector;
         private ClientController _clientController;
 
         public bool IsOwned
         {
             // TODO: Is there a better way to check if the drone is owned by the
-            // current worker? It seems odd to have a reference to the connector
-            // object just to fetch the worker ID.
+            //       current worker? It seems odd to have a reference to the connector
+            //       object just to fetch the worker ID.
             get { return Owner == _connector.Worker.WorkerId; }
         }
 
