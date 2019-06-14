@@ -61,23 +61,17 @@ namespace BetaApartUranus
         }
 
         #region Unity Lifecycle Methods
-        private void Awake()
+        private void OnEnable()
         {
+            LinkedEntity = GetComponent<LinkedEntityComponent>();
             _display = GetComponentInChildren<MeshRenderer>();
             _connector = FindObjectOfType<UnityClientConnector>();
             _player = FindObjectOfType<AuthoritativePlayer>();
 
-            _defaultMaterial = _display.sharedMaterial;
-        }
-
-        private void Start()
-        {
-            // NOTE: The LinkedEntityComponent is added to the object late, so we can't
-            // retrieve it in Awake() like normal.
-            LinkedEntity = GetComponent<LinkedEntityComponent>();
-
             _player.SelectedDroneChanged += OnSelectedDroneChanged;
 
+            // Setup initial material.
+            _defaultMaterial = _display.sharedMaterial;
             if (IsOwned)
             {
                 _display.sharedMaterial = _playerMaterial;

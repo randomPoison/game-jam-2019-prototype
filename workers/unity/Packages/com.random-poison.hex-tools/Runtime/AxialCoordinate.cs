@@ -1,5 +1,8 @@
-﻿namespace HexTools
+﻿using System;
+
+namespace HexTools
 {
+    [Serializable]
     public struct AxialCoordinate
     {
         /// <summary>
@@ -29,6 +32,7 @@
         }
     }
 
+    [Serializable]
     public struct FractionalAxialCoordinate
     {
         /// <summary>

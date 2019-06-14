@@ -1,4 +1,5 @@
 ﻿using System;
+using BetaApartUranus.DroneCommands;
 using HexTools;
 using Improbable.Gdk.Core;
 using Improbable.Gdk.Subscriptions;
@@ -36,7 +37,7 @@ namespace BetaApartUranus
         }
 
         #region Unity Lifecycle Methods
-        private void Awake()
+        private void OnEnable()
         {
             // Initialize references to objects in the scene.
             _camera = FindObjectOfType<Camera>();
@@ -86,11 +87,23 @@ namespace BetaApartUranus
             // empty space.
             if (Input.GetMouseButtonDown(0) && _selectedDrone != null)
             {
+                var command = new MoveToPosition
+                {
+                    Target = _cursorGridPosition,
+                };
+
                 _droneSender.SendAddCommandCommand(
                     _selectedDrone.LinkedEntity.EntityId,
-                    new AddCommandRequest(),
+                    new Command(CommandType.MoveToPosition, JsonUtility.ToJson(command)),
                     response =>
                     {
+                        if (response.StatusCode != StatusCode.Success)
+                        {
+                            Debug.Log("Failed to add drone command");
+                            return;
+                        }
+
+                        Debug.Log("Added drone command successfully!");
                     });
             }
         }

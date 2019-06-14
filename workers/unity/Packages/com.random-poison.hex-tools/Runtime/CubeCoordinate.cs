@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace HexTools
 {
+    [Serializable]
     public struct CubeCoordinate
     {
         public int Q;
@@ -16,6 +18,7 @@ namespace HexTools
         }
     }
 
+    [Serializable]
     public struct FractionalCubeCoordinate
     {
         public float Q;
