@@ -4,4 +4,10 @@ component Drone {
     id = 98938715;
 
     string owner = 1;
+    list<string> command_queue = 2;
+
+    command AddCommandResponse add_command(AddCommandRequest);
 }
+
+type AddCommandRequest {}
+type AddCommandResponse {}

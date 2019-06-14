@@ -13,15 +13,22 @@ namespace BetaApartUranus
         //[Require]
         //private WorldCommandSender _worldSender = null;
 
-        private void OnEnable()
-        {
-            _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
-        }
-
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
         {
             Debug.Log($"Handling add command request {request.EntityId} from {request.CallerWorkerId}");
             _commandReceiver.SendAddCommandResponse(request.RequestId, new AddCommandResponse());
         }
+
+        #region Unity Lifecycle Methods
+        private void OnEnable()
+        {
+            _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
+        }
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.DrawCube(transform.position, Vector3.one);
+        }
+        #endregion
     }
 }

@@ -19,15 +19,21 @@ namespace BetaApartUranus
 
         [Require]
         private DroneReader _droneReader = null;
-
-        // Components on this object.
         private MeshRenderer _display;
 
         // Global state objects.
         private UnityClientConnector _connector;
-        private ClientController _clientController;
+        private AuthoritativePlayer _player;
 
+        // State data.
         private Material _defaultMaterial = null;
+
+        public Drone.Component Data
+        {
+            get { return _droneReader.Data; }
+        }
+
+        public LinkedEntityComponent LinkedEntity { get; private set; }
 
         public bool IsOwned
         {
@@ -59,14 +65,18 @@ namespace BetaApartUranus
         {
             _display = GetComponentInChildren<MeshRenderer>();
             _connector = FindObjectOfType<UnityClientConnector>();
-            _clientController = FindObjectOfType<ClientController>();
+            _player = FindObjectOfType<AuthoritativePlayer>();
 
             _defaultMaterial = _display.sharedMaterial;
         }
 
         private void Start()
         {
-            _clientController.SelectedDroneChanged += OnSelectedDroneChanged;
+            // NOTE: The LinkedEntityComponent is added to the object late, so we can't
+            // retrieve it in Awake() like normal.
+            LinkedEntity = GetComponent<LinkedEntityComponent>();
+
+            _player.SelectedDroneChanged += OnSelectedDroneChanged;
 
             if (IsOwned)
             {
@@ -76,14 +86,14 @@ namespace BetaApartUranus
 
         private void OnDestroy()
         {
-            _clientController.SelectedDroneChanged -= OnSelectedDroneChanged;
+            _player.SelectedDroneChanged -= OnSelectedDroneChanged;
         }
         #endregion
 
         #region IPointerDownHandler
         public void OnPointerDown(PointerEventData eventData)
         {
-            _clientController.SelectDrone(this);
+            _player.SelectDrone(this);
         }
         #endregion
     }

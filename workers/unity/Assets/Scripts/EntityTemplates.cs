@@ -1,4 +1,5 @@
-﻿using HexTools;
+﻿using System.Collections.Generic;
+using HexTools;
 using Improbable;
 using Improbable.Gdk.Core;
 using UnityEngine;
@@ -13,7 +14,7 @@ namespace BetaApartUranus
             var worldPosition = HexUtils.GridToWorld(position.ToAxial());
 
             var entityTemplate = new EntityTemplate();
-            entityTemplate.AddComponent(new Drone.Snapshot(playerId), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new Drone.Snapshot(playerId, new List<string>()), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new GridPosition.Snapshot(position), WorkerUtils.UnityGameLogic);
 
             entityTemplate.AddComponent(
