@@ -1,4 +1,5 @@
-﻿using Improbable.Gdk.Core;
+﻿using HexTools;
+using Improbable.Gdk.Core;
 using Improbable.Gdk.Core.Commands;
 using Improbable.Gdk.Subscriptions;
 using UnityEngine;
@@ -23,7 +24,7 @@ namespace BetaApartUranus
             Debug.Log($"Handling spawn drone request {request.EntityId} from {request.CallerWorkerId}");
 
             // Generate a random starting point for the drone.
-            var position = new GridCoordinate(
+            var position = new AxialCoordinate(
                 Random.Range(-10, 10),
                 Random.Range(-10, 10));
 

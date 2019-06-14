@@ -7,14 +7,14 @@ namespace BetaApartUranus
 {
     public static class EntityTemplates
     {
-        public static EntityTemplate Drone(GridCoordinate position, string playerId)
+        public static EntityTemplate Drone(AxialCoordinate position, string playerId)
         {
             // Calculate the world position based off the grid position.
-            var worldPosition = HexUtils.GridToWorld(position.ToAxial());
+            var worldPosition = HexUtils.GridToWorld(position);
 
             var entityTemplate = new EntityTemplate();
             entityTemplate.AddComponent(new Drone.Snapshot(playerId, new List<Command>()), WorkerUtils.UnityGameLogic);
-            entityTemplate.AddComponent(new GridPosition.Snapshot(position), WorkerUtils.UnityGameLogic);
+            entityTemplate.AddComponent(new GridPosition.Snapshot(new GridCoordinate(position.Q, position.R)), WorkerUtils.UnityGameLogic);
 
             entityTemplate.AddComponent(
                 new Position.Snapshot(new Coordinates
