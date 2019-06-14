@@ -13,8 +13,14 @@ namespace BetaApartUranus
             var worldPosition = HexUtils.GridToWorld(position);
 
             var entityTemplate = new EntityTemplate();
-            entityTemplate.AddComponent(new Drone.Snapshot(playerId, new List<Command>()), WorkerUtils.UnityGameLogic);
-            entityTemplate.AddComponent(new GridPosition.Snapshot(new GridCoordinate(position.Q, position.R)), WorkerUtils.UnityGameLogic);
+
+            entityTemplate.AddComponent(
+                new Drone.Snapshot { Owner = playerId, CommandQueue = new List<Command>() },
+                WorkerUtils.UnityGameLogic);
+
+            entityTemplate.AddComponent(
+                new GridPosition.Snapshot(new GridCoordinate(position.Q, position.R)),
+                WorkerUtils.UnityGameLogic);
 
             entityTemplate.AddComponent(
                 new Position.Snapshot(new Coordinates
@@ -23,6 +29,7 @@ namespace BetaApartUranus
                     Z = worldPosition.y
                 }),
                 WorkerUtils.UnityGameLogic);
+
             entityTemplate.AddComponent(new Metadata.Snapshot("Drone"), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
             entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient);

@@ -5,6 +5,7 @@ component Drone {
 
     string owner = 1;
     list<Command> command_queue = 2;
+    option<Command> active_command = 3;
 
     command AddCommandResponse add_command(Command);
 }
