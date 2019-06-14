@@ -19,10 +19,6 @@ namespace BetaApartUranus
                 WorkerUtils.UnityGameLogic);
 
             entityTemplate.AddComponent(
-                new GridPosition.Snapshot(new GridCoordinate(position.Q, position.R)),
-                WorkerUtils.UnityGameLogic);
-
-            entityTemplate.AddComponent(
                 new Position.Snapshot(new Coordinates
                 {
                     X = worldPosition.x,

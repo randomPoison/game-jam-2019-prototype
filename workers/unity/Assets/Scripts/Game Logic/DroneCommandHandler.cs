@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using BetaApartUranus.DroneCommands;
+using HexTools;
+using Improbable;
 using Improbable.Gdk.Subscriptions;
 using UnityEngine;
 
@@ -6,6 +9,14 @@ namespace BetaApartUranus
 {
     public class DroneCommandHandler : MonoBehaviour
     {
+        // Movement speed in units per second.
+        //
+        // TODO: Make this into a component for configurability.
+        private const float MOVE_SPEED = 1f;
+
+        [Require]
+        private PositionWriter _positionWriter = null;
+
         [Require]
         private DroneWriter _droneWriter = null;
 
@@ -62,8 +73,43 @@ namespace BetaApartUranus
                 switch (command.Type)
                 {
                     case CommandType.MoveToPosition:
+                        var moveToPosition = JsonUtility.FromJson<MoveToPosition>(command.Data);
 
-                        // TODO: Move towards the target position.
+                        // Determine offset to the target position.
+                        var position = _positionWriter.Data.Coords.ToUnityVector();
+                        var targetWorldPos = HexUtils.GridToWorld(moveToPosition.Target);
+                        var offset = new Vector3(targetWorldPos.x, 0f, targetWorldPos.y) - position;
+
+                        // Determine the distance to the target and the direction.
+                        var distance = offset.magnitude;
+                        var direction = offset.normalized;
+
+                        // If we're within a frame's distance from the target, snap to the
+                        // target and end movement. Otherwise, move towards the target.
+                        var maxMovement = Time.deltaTime * MOVE_SPEED;
+                        if (distance > maxMovement)
+                        {
+                            // Update the world position of the drone.
+                            var newPosition = position + maxMovement * direction;
+                            _positionWriter.SendUpdate(new Position.Update
+                            {
+                                Coords = new Coordinates(newPosition.x, 0f, newPosition.z),
+                            });
+                        }
+                        else
+                        {
+                            // Snap the drone to its target position.
+                            _positionWriter.SendUpdate(new Position.Update
+                            {
+                                Coords = new Coordinates(targetWorldPos.x, 0f, targetWorldPos.y),
+                            });
+
+                            // Clear the active command.
+                            _droneWriter.SendUpdate(new Drone.Update
+                            {
+                                ActiveCommand = null,
+                            });
+                        }
 
                         break;
 
