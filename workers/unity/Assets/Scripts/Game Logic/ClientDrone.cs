@@ -14,10 +14,6 @@ namespace BetaApartUranus
         private Material _playerMaterial = null;
 
         [SerializeField]
-        [Tooltip("The material to use when the drone is owned by another player.")]
-        private Material _otherMaterial = null;
-
-        [SerializeField]
         [Tooltip("The material to use when the drone is selected.")]
         private Material _selectedMaterial = null;
 
@@ -30,6 +26,8 @@ namespace BetaApartUranus
         // Global state objects.
         private UnityClientConnector _connector;
         private ClientController _clientController;
+
+        private Material _defaultMaterial = null;
 
         public bool IsOwned
         {
@@ -52,7 +50,7 @@ namespace BetaApartUranus
             }
             else
             {
-                _display.sharedMaterial = IsOwned ? _playerMaterial : _otherMaterial;
+                _display.sharedMaterial = IsOwned ? _playerMaterial : _defaultMaterial;
             }
         }
 
@@ -62,6 +60,8 @@ namespace BetaApartUranus
             _display = GetComponentInChildren<MeshRenderer>();
             _connector = FindObjectOfType<UnityClientConnector>();
             _clientController = FindObjectOfType<ClientController>();
+
+            _defaultMaterial = _display.sharedMaterial;
         }
 
         private void Start()
