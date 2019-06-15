@@ -23,6 +23,7 @@ namespace BetaApartUranus
         [Require]
         private DroneCommandReceiver _commandReceiver = null;
 
+        private UnityGameLogicConnector _connector;
         private LinkedEntityComponent _linkedEntity;
 
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
@@ -58,6 +59,7 @@ namespace BetaApartUranus
         private void OnEnable()
         {
             _linkedEntity = GetComponent<LinkedEntityComponent>();
+            _connector = FindObjectOfType<UnityGameLogicConnector>();
 
             _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
         }
@@ -139,6 +141,8 @@ namespace BetaApartUranus
                     CommandQueue = commands,
                 });
             }
+
+            transform.position = _positionWriter.Data.Coords.ToUnityVector() + _connector.Worker.Origin;
         }
 
         private void OnDrawGizmos()

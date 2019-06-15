@@ -85,7 +85,7 @@ namespace BetaApartUranus
 
         private void Update()
         {
-            transform.position = _positionReader.Data.Coords.ToUnityVector();
+            transform.position = _positionReader.Data.Coords.ToUnityVector() + _connector.Worker.Origin;
         }
 
         private void OnDestroy()
