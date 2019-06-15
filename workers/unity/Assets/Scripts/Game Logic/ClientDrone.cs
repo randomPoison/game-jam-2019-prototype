@@ -1,4 +1,5 @@
-﻿using Improbable.Gdk.Subscriptions;
+﻿using Improbable;
+using Improbable.Gdk.Subscriptions;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -19,6 +20,10 @@ namespace BetaApartUranus
 
         [Require]
         private DroneReader _droneReader = null;
+
+        [Require]
+        private PositionReader _positionReader = null;
+
         private MeshRenderer _display;
 
         // Global state objects.
@@ -76,6 +81,11 @@ namespace BetaApartUranus
             {
                 _display.sharedMaterial = _playerMaterial;
             }
+        }
+
+        private void Update()
+        {
+            transform.position = _positionReader.Data.Coords.ToUnityVector();
         }
 
         private void OnDestroy()
