@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Linq;
 using BetaApartUranus.DroneCommands;
 using HexTools;
 using Improbable.Gdk.Core;
 using Improbable.Gdk.Subscriptions;
 using Improbable.Worker.CInterop;
+using Improbable.Worker.CInterop.Query;
 using UnityEngine;
 
 namespace BetaApartUranus
@@ -26,7 +28,18 @@ namespace BetaApartUranus
         [Require]
         private SpawnControllerCommandSender _commandSender = null;
 
+        private readonly EntityQuery _query = new EntityQuery()
+        {
+            Constraint = new ComponentConstraint(SpawnController.ComponentId),
+            ResultType = new SnapshotResultType(),
+        };
+
+        [Require]
+        private WorldCommandSender _worldSender = null;
+
         public event Action<ClientDrone> SelectedDroneChanged;
+
+        private EntityId? _spawnControllerId = null;
 
         public void SelectDrone(ClientDrone drone)
         {
@@ -43,31 +56,31 @@ namespace BetaApartUranus
             _camera = FindObjectOfType<Camera>();
             _canvas = FindObjectOfType<MainCanvasController>();
             _cursor = Instantiate(_cursorPrefab);
-        }
 
-        private void Start()
-        {
-            if (_commandSender != null)
-            {
-                _commandSender.SendSpawnDroneCommand(
-                    new EntityId(2), // TODO: Don't hard-code the entity ID.
-                    new SpawnDroneRequest(),
-                    response =>
+            _worldSender.SendEntityQueryCommand(
+                new Improbable.Gdk.Core.Commands.WorldCommands.EntityQuery.Request(_query), 
+                response =>
+                {
+                    if (response.StatusCode == StatusCode.Success)
                     {
-                        if (response.StatusCode == StatusCode.Success)
-                        {
-                            Debug.Log("Successfully spawned initial drone for player");
-                        }
-                        else
-                        {
-                            Debug.Log($"Spawn drone request failed, status: {response.StatusCode}, message: {response.Message}");
-                        }
-                    });
-            }
-            else
-            {
-                Debug.LogWarning("_commandSender is null, unable to request drone spawn");
-            }
+                        _spawnControllerId = response.Result.Keys.First();
+
+                        _commandSender.SendSpawnDroneCommand(
+                            _spawnControllerId.Value,
+                            new SpawnDroneRequest(),
+                            spawnResponse =>
+                            {
+                                if (spawnResponse.StatusCode == StatusCode.Success)
+                                {
+                                    Debug.Log("Successfully spawned initial drone for player");
+                                }
+                                else
+                                {
+                                    Debug.Log($"Spawn drone request failed, status: {spawnResponse.StatusCode}, message: {spawnResponse.Message}");
+                                }
+                            });
+                    }
+                });
         }
 
         private void Update()
