@@ -106,7 +106,7 @@ namespace BetaApartUranus
                 };
 
                 _droneSender.SendAddCommandCommand(
-                    _selectedDrone.LinkedEntity.EntityId,
+                    _selectedDrone.EntityId,
                     new Command(CommandType.MoveToPosition, JsonUtility.ToJson(command)),
                     response =>
                     {

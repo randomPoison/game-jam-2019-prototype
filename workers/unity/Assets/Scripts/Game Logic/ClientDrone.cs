@@ -1,4 +1,5 @@
 ﻿using Improbable;
+using Improbable.Gdk.Core;
 using Improbable.Gdk.Subscriptions;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -19,6 +20,9 @@ namespace BetaApartUranus
         private Material _selectedMaterial = null;
 
         [Require]
+        private EntityId _entityId = new EntityId();
+
+        [Require]
         private DroneReader _droneReader = null;
 
         [Require]
@@ -33,12 +37,15 @@ namespace BetaApartUranus
         // State data.
         private Material _defaultMaterial = null;
 
+        public EntityId EntityId
+        {
+            get { return _entityId; }
+        }
+
         public Drone.Component Data
         {
             get { return _droneReader.Data; }
         }
-
-        public LinkedEntityComponent LinkedEntity { get; private set; }
 
         public bool IsOwned
         {
@@ -68,7 +75,6 @@ namespace BetaApartUranus
         #region Unity Lifecycle Methods
         private void OnEnable()
         {
-            LinkedEntity = GetComponent<LinkedEntityComponent>();
             _display = GetComponentInChildren<MeshRenderer>();
             _connector = FindObjectOfType<UnityClientConnector>();
             _player = FindObjectOfType<AuthoritativePlayer>();
