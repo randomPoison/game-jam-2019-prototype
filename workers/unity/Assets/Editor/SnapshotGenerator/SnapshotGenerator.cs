@@ -1,6 +1,6 @@
 ﻿using Improbable;
 using Improbable.Gdk.Core;
-using Improbable.PlayerLifecycle;
+using Improbable.Gdk.PlayerLifecycle;
 using UnityEngine;
 using Snapshot = Improbable.Gdk.Core.Snapshot;
 
@@ -43,11 +43,7 @@ namespace BetaApartUranus.Editor
             template.AddComponent(new Persistence.Snapshot(), serverAttribute);
             template.AddComponent(new PlayerCreator.Snapshot(), serverAttribute);
 
-            template.SetReadAccess(
-                UnityClientConnector.WorkerType,
-                UnityGameLogicConnector.WorkerType,
-                AndroidClientWorkerConnector.WorkerType,
-                iOSClientWorkerConnector.WorkerType);
+            template.SetReadAccess(WorkerUtils.AllWorkers);
             template.SetComponentWriteAccess(EntityAcl.ComponentId, serverAttribute);
 
             snapshot.AddEntity(template);
@@ -63,11 +59,7 @@ namespace BetaApartUranus.Editor
             template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
             template.AddComponent(new SpawnController.Snapshot(), WorkerUtils.UnityGameLogic);
 
-            template.SetReadAccess(
-                UnityClientConnector.WorkerType,
-                UnityGameLogicConnector.WorkerType,
-                AndroidClientWorkerConnector.WorkerType,
-                iOSClientWorkerConnector.WorkerType);
+            template.SetReadAccess(WorkerUtils.AllWorkers);
             template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
             snapshot.AddEntity(template);
