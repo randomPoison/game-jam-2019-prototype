@@ -49,6 +49,50 @@ namespace BetaApartUranus
             SelectedDroneChanged?.Invoke(drone);
         }
 
+        internal void SelectResourceNode(ClientResourceNode clientResourceNode)
+        {
+            if (_selectedDrone == null)
+            {
+                return;
+            }
+
+            if (_selectedDrone.IsOwned)
+            {
+                var moveCommand = new MoveToPosition
+                {
+                    Target = _cursorGridPosition,
+                };
+                var harvestCommand = new HarvestResourceNode
+                {
+                    Target = clientResourceNode.EntityId,
+                };
+
+                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(moveCommand));
+                AddCommandToQueue(CommandType.HarvestResourceNode, JsonUtility.ToJson(harvestCommand));
+            }
+            else
+            {
+                // select outpost to show remaining resource??
+            }
+        }
+
+        private void AddCommandToQueue(CommandType type, string json)
+        {
+            _droneSender.SendAddCommandCommand(
+                _selectedDrone.EntityId,
+                new Command(type, json),
+                response =>
+                {
+                    if (response.StatusCode != StatusCode.Success)
+                    {
+                        Debug.Log($"Failed to add {type} drone command");
+                        return;
+                    }
+
+                    Debug.Log("Added {type} drone command successfully!");
+                });
+        }
+
         #region Unity Lifecycle Methods
         private void OnEnable()
         {
@@ -112,19 +156,7 @@ namespace BetaApartUranus
                     Target = _cursorGridPosition,
                 };
 
-                _droneSender.SendAddCommandCommand(
-                    _selectedDrone.EntityId,
-                    new Command(CommandType.MoveToPosition, JsonUtility.ToJson(command)),
-                    response =>
-                    {
-                        if (response.StatusCode != StatusCode.Success)
-                        {
-                            Debug.Log("Failed to add drone command");
-                            return;
-                        }
-
-                        Debug.Log("Added drone command successfully!");
-                    });
+                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(command));
             }
         }
 
