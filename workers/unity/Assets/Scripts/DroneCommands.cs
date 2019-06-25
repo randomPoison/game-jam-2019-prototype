@@ -1,5 +1,6 @@
 ﻿using System;
 using HexTools;
+using Improbable.Gdk.Core;
 
 namespace BetaApartUranus.DroneCommands
 {
@@ -7,5 +8,10 @@ namespace BetaApartUranus.DroneCommands
     public struct MoveToPosition
     {
         public AxialCoordinate Target;
+    }
+    [Serializable]
+    public struct HarvestResourceNode
+    {
+        public EntityId Target;
     }
 }
