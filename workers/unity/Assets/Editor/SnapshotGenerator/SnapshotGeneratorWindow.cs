@@ -34,8 +34,8 @@ namespace BetaApartUranus.Editor
                         "..",
                         "snapshots",
                         "default.snapshot")),
-                NumResourceNodes = 1,
-                WorldDimensions = new Vector2(5000f, 5000f),
+                NumResourceNodes = 1000,
+                WorldDimensions = new Vector2(1000f, 1000f),
             };
         }
 
