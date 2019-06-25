@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -6,7 +6,7 @@ namespace BetaApartUranus.Editor
 {
     internal class SnapshotEditorWindow : EditorWindow
     {
-        private SnapshotGenerator.Arguments arguments;
+        private SnapshotGenerator.Arguments _arguments;
 
         [MenuItem("SpatialOS/Generate snapshot")]
         public static void GenerateMenuItem()
@@ -24,7 +24,7 @@ namespace BetaApartUranus.Editor
 
         private void SetDefaults()
         {
-            arguments = new SnapshotGenerator.Arguments
+            _arguments = new SnapshotGenerator.Arguments
             {
                 OutputPath = Path.GetFullPath(
                     Path.Combine(
@@ -33,7 +33,9 @@ namespace BetaApartUranus.Editor
                         "..",
                         "..",
                         "snapshots",
-                        "default.snapshot"))
+                        "default.snapshot")),
+                NumResourceNodes = 1000,
+                WorldDimensions = new Vector2(1000f, 1000f),
             };
         }
 
@@ -47,14 +49,18 @@ namespace BetaApartUranus.Editor
                     Repaint();
                 }
 
-                arguments.OutputPath = EditorGUILayout.TextField("Snapshot path", arguments.OutputPath);
+                _arguments.OutputPath = EditorGUILayout.TextField("Snapshot path", _arguments.OutputPath);
 
-                var shouldDisable = string.IsNullOrEmpty(arguments.OutputPath);
+                _arguments.NumResourceNodes = EditorGUILayout.IntField("Resource Nodes", _arguments.NumResourceNodes);
+                _arguments.WorldDimensions.x = EditorGUILayout.FloatField("World Width", _arguments.WorldDimensions.x);
+                _arguments.WorldDimensions.y = EditorGUILayout.FloatField("World Height", _arguments.WorldDimensions.y);
+
+                var shouldDisable = string.IsNullOrEmpty(_arguments.OutputPath);
                 using (new EditorGUI.DisabledScope(shouldDisable))
                 {
                     if (GUILayout.Button("Generate snapshot"))
                     {
-                        SnapshotGenerator.Generate(arguments);
+                        SnapshotGenerator.Generate(_arguments);
                     }
                 }
             }
