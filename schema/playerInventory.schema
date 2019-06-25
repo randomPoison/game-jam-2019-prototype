@@ -1,0 +1,8 @@
+package beta_apart_uranus;
+
+component PlayerInventory {
+    id = 402302913;
+
+    uint32 copper = 1;
+    uint32 coal = 2;
+}

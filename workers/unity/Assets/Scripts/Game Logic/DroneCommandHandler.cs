@@ -25,6 +25,9 @@ namespace BetaApartUranus
         [Require]
         private DroneCommandReceiver _commandReceiver = null;
 
+        [Require]
+        private PlayerInventoryWriter _inventoryWriter = null;
+
         private UnityGameLogicConnector _connector;
         private LinkedEntityComponent _linkedEntity;
 
@@ -66,6 +69,7 @@ namespace BetaApartUranus
             _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
         }
 
+        float? resourceCollectionTimer = null;
         private void Update()
         {
             // If the drone has a command it's actively working on, perform any work
@@ -120,13 +124,64 @@ namespace BetaApartUranus
                     case CommandType.HarvestResourceNode:
                         var harvestResourceNode = JsonUtility.FromJson<HarvestResourceNode>(command.Data);
 
-                        var entityID = new EntityId(harvestResourceNode.Target);
-                        Entity entity;
-                        _linkedEntity.Worker.TryGetEntity(entityID, out entity);
+                        if (!resourceCollectionTimer.HasValue)
+                        {
+                            resourceCollectionTimer = 0;
+                        }
+                        else if (resourceCollectionTimer.Value < 1f)
+                        {
+                            resourceCollectionTimer += Time.deltaTime;
+                        }
+                        else
+                        {
+                            resourceCollectionTimer = null;
 
-                        var entityManager = _linkedEntity.World.EntityManager;
-                        var resourceNodeComponent = entityManager.GetComponentData<ResourceNode.Component>(entity);
-                        resourceNodeComponent.Quantity -= 1;
+                            Entity targetEntity;
+                            if (_linkedEntity.Worker.TryGetEntity(new EntityId(harvestResourceNode.Target), out targetEntity))
+                            {
+                                var entityManager = _linkedEntity.World.EntityManager;
+                                var resourceNodeComponent = entityManager.GetComponentData<ResourceNode.Component>(targetEntity);
+
+                                uint harvestedQuantity = System.Math.Min(1, resourceNodeComponent.Quantity);
+                                resourceNodeComponent.Quantity -= harvestedQuantity;
+
+                                switch (resourceNodeComponent.Type)
+                                {
+                                    case ResourceType.Coal:
+                                        _inventoryWriter.SendUpdate(new PlayerInventory.Update()
+                                        {
+                                            Coal = _inventoryWriter.Data.Coal + harvestedQuantity
+                                        });
+
+                                        break;
+
+                                    case ResourceType.Copper:
+                                        _inventoryWriter.SendUpdate(new PlayerInventory.Update()
+                                        {
+                                            Copper = _inventoryWriter.Data.Copper + harvestedQuantity
+                                        });
+                                        break;
+                                }
+
+                                if (resourceNodeComponent.Quantity <= 0)
+                                {
+                                    // Clear the active command.
+                                    _droneWriter.SendUpdate(new Drone.Update
+                                    {
+                                        ActiveCommand = null,
+                                    });
+                                }
+                            } else {
+                                Debug.LogError($"No target entity with ID {harvestResourceNode.Target}");
+
+                                // Clear the active command.
+                                _droneWriter.SendUpdate(new Drone.Update
+                                {
+                                    ActiveCommand = null,
+                                });
+                            }
+                        }
+
                         break;
 
                     default:
