@@ -28,7 +28,28 @@ namespace BetaApartUranus.Editor
 
             AddPlayerSpawner(snapshot);
             AddSpawnController(snapshot);
+            AddResourceNode(snapshot);
+
             return snapshot;
+        }
+
+        private static void AddResourceNode (Snapshot snapshot)
+        {
+            var template = new EntityTemplate();
+
+            var pos = HexTools.HexUtils.GridToWorld(new HexTools.AxialCoordinate(5, 5));
+            template.AddComponent(new Position.Snapshot(new Coordinates (pos.x, 0, pos.y)), WorkerUtils.UnityGameLogic);
+            template.AddComponent(
+                new Metadata.Snapshot { EntityType = "ResourceNode" },
+                WorkerUtils.UnityGameLogic);
+            template.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
+            template.AddComponent(new ResourceNode.Snapshot(), WorkerUtils.UnityGameLogic);
+            template.AddComponent(new GridPosition.Snapshot(new GridCoordinate(5, 5)), WorkerUtils.UnityGameLogic);
+
+            template.SetReadAccess(WorkerUtils.AllWorkers);
+            template.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
+
+            snapshot.AddEntity(template);
         }
 
         private static void AddPlayerSpawner(Snapshot snapshot)
