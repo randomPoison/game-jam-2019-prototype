@@ -1,0 +1,14 @@
+package beta_apart_uranus;
+
+
+component ResourceNode {
+    id = 241024294;
+
+    ResourceType type = 1;
+    uint32 quantity = 2;
+}
+
+enum ResourceType {
+    Copper = 0;
+    Coal = 1;
+}
