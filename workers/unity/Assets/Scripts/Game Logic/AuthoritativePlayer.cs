@@ -58,28 +58,35 @@ namespace BetaApartUranus
             _cursor = Instantiate(_cursorPrefab);
 
             _worldSender.SendEntityQueryCommand(
-                new Improbable.Gdk.Core.Commands.WorldCommands.EntityQuery.Request(_query), 
+                new Improbable.Gdk.Core.Commands.WorldCommands.EntityQuery.Request(_query),
                 response =>
                 {
-                    if (response.StatusCode == StatusCode.Success)
+                    if (response.StatusCode != StatusCode.Success)
                     {
-                        _spawnControllerId = response.Result.Keys.First();
-
-                        _commandSender.SendSpawnDroneCommand(
-                            _spawnControllerId.Value,
-                            new SpawnDroneRequest(),
-                            spawnResponse =>
-                            {
-                                if (spawnResponse.StatusCode == StatusCode.Success)
-                                {
-                                    Debug.Log("Successfully spawned initial drone for player");
-                                }
-                                else
-                                {
-                                    Debug.Log($"Spawn drone request failed, status: {spawnResponse.StatusCode}, message: {spawnResponse.Message}");
-                                }
-                            });
+                        Debug.LogWarning("Failed to get the entity ID for the spawn controller");
+                        return;
                     }
+
+                    _spawnControllerId = response.Result.Keys.First();
+
+                    // Once we know the entity ID for the spawn controller, request that
+                    // it spawn a new drone for us.
+                    _commandSender.SendSpawnDroneCommand(
+                        _spawnControllerId.Value,
+                        new SpawnDroneRequest(),
+                        spawnResponse =>
+                        {
+                            if (spawnResponse.StatusCode == StatusCode.Success)
+                            {
+                                Debug.Log("Successfully spawned initial drone for player");
+                            }
+                            else
+                            {
+                                Debug.Log($"Spawn drone request failed, " +
+                                    $"status: {spawnResponse.StatusCode}, " +
+                                    $"message: {spawnResponse.Message}");
+                            }
+                        });
                 });
         }
 
