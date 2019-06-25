@@ -12,6 +12,6 @@ namespace BetaApartUranus.DroneCommands
     [Serializable]
     public struct HarvestResourceNode
     {
-        public EntityId Target;
+        public long Target;
     }
 }

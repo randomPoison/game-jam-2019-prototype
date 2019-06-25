@@ -64,7 +64,7 @@ namespace BetaApartUranus
                 };
                 var harvestCommand = new HarvestResourceNode
                 {
-                    Target = clientResourceNode.EntityId,
+                    Target = clientResourceNode.EntityId.Id,
                 };
 
                 AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(moveCommand));

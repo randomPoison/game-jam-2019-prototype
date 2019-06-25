@@ -2,7 +2,9 @@
 using BetaApartUranus.DroneCommands;
 using HexTools;
 using Improbable;
+using Improbable.Gdk.Core;
 using Improbable.Gdk.Subscriptions;
+using Unity.Entities;
 using UnityEngine;
 
 namespace BetaApartUranus
@@ -113,6 +115,18 @@ namespace BetaApartUranus
                             });
                         }
 
+                        break;
+
+                    case CommandType.HarvestResourceNode:
+                        var harvestResourceNode = JsonUtility.FromJson<HarvestResourceNode>(command.Data);
+
+                        var entityID = new EntityId(harvestResourceNode.Target);
+                        Entity entity;
+                        _linkedEntity.Worker.TryGetEntity(entityID, out entity);
+
+                        var entityManager = _linkedEntity.World.EntityManager;
+                        var resourceNodeComponent = entityManager.GetComponentData<ResourceNode.Component>(entity);
+                        resourceNodeComponent.Quantity -= 1;
                         break;
 
                     default:
