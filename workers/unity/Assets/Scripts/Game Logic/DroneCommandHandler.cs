@@ -144,6 +144,7 @@ namespace BetaApartUranus
 
                                 uint harvestedQuantity = System.Math.Min(1, resourceNodeComponent.Quantity);
                                 resourceNodeComponent.Quantity -= harvestedQuantity;
+                                entityManager.SetComponentData<ResourceNode.Component>(targetEntity, resourceNodeComponent);
 
                                 switch (resourceNodeComponent.Type)
                                 {
