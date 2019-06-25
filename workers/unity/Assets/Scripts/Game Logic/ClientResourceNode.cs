@@ -43,8 +43,7 @@ namespace BetaApartUranus
         #region IPointerDownHandler
         public void OnPointerDown (PointerEventData eventData)
         {
-            Debug.Log("OnPointing to Resource node.");
-            //_player.SelectResourceNode(this);
+            _player.SelectResourceNode(this);
         }
         #endregion
     }
