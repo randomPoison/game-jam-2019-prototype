@@ -36,8 +36,10 @@ namespace BetaApartUranus
         private UnityGameLogicConnector _connector;
         private LinkedEntityComponent _linkedEntity;
 
+        private Vector2 _position;
         private Command? _activeCommand = null;
-        private float _lastUpdateTime;
+        private float _timeToNextUpdate;
+        float? resourceCollectionTimer = null;
 
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
         {
@@ -76,10 +78,12 @@ namespace BetaApartUranus
 
             _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
 
+            var worldPosition = _positionWriter.Data.Coords.ToUnityVector();
+            _position = new Vector2(worldPosition.x, worldPosition.z);
             _activeCommand = _droneWriter.Data.ActiveCommand;
+            _timeToNextUpdate = UPDATE_INTERVAL;
         }
 
-        float? resourceCollectionTimer = null;
         private void Update()
         {
             // If the drone has a command it's actively working on, perform any work
@@ -94,9 +98,8 @@ namespace BetaApartUranus
                         var moveToPosition = JsonUtility.FromJson<MoveToPosition>(command.Data);
 
                         // Determine offset to the target position.
-                        var position = _positionWriter.Data.Coords.ToUnityVector();
                         var targetWorldPos = HexUtils.GridToWorld(moveToPosition.Target);
-                        var offset = new Vector3(targetWorldPos.x, 0f, targetWorldPos.y) - position;
+                        var offset = targetWorldPos - _position;
 
                         // Determine the distance to the target and the direction.
                         var distance = offset.magnitude;
@@ -108,21 +111,12 @@ namespace BetaApartUranus
                         if (distance > maxMovement)
                         {
                             // Update the world position of the drone.
-                            var newPosition = position + maxMovement * direction;
-                            _positionWriter.SendUpdate(new Position.Update
-                            {
-                                Coords = new Coordinates(newPosition.x, 0f, newPosition.z),
-                            });
+                            _position = _position + maxMovement * direction;
                         }
                         else
                         {
-                            // Snap the drone to its target position.
-                            _positionWriter.SendUpdate(new Position.Update
-                            {
-                                Coords = new Coordinates(targetWorldPos.x, 0f, targetWorldPos.y),
-                            });
-
-                            // Clear the active command.
+                            // Snap to the target position and clear the active command.
+                            _position = targetWorldPos;
                             _activeCommand = null;
                         }
 
@@ -220,6 +214,18 @@ namespace BetaApartUranus
                 {
                     ActiveCommand = _activeCommand,
                 });
+            }
+
+            _timeToNextUpdate -= Time.deltaTime;
+            var worldPosition = new Vector3(_position.x, 0f, _position.y);
+            if (_timeToNextUpdate < 0f && !worldPosition.Equals(_positionWriter.Data.Coords))
+            {
+                _positionWriter.SendUpdate(new Position.Update
+                {
+                    Coords = new Coordinates(worldPosition.x, worldPosition.y, worldPosition.z),
+                });
+
+                _timeToNextUpdate = UPDATE_INTERVAL;
             }
         }
 
