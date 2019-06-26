@@ -14,7 +14,12 @@ namespace BetaApartUranus
         // Movement speed in units per second.
         //
         // TODO: Make this into a component for configurability.
-        private const float MOVE_SPEED = 1f;
+        private const float MOVE_SPEED = 3f;
+
+        /// <summary>
+        /// Interval at which we send update data to SpatialOS. Value in seconds.
+        /// </summary>
+        private const float UPDATE_INTERVAL = 1f;
 
         [Require]
         private PositionWriter _positionWriter = null;
@@ -30,6 +35,9 @@ namespace BetaApartUranus
 
         private UnityGameLogicConnector _connector;
         private LinkedEntityComponent _linkedEntity;
+
+        private Command? _activeCommand = null;
+        private float _lastUpdateTime;
 
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
         {
@@ -67,6 +75,8 @@ namespace BetaApartUranus
             _connector = FindObjectOfType<UnityGameLogicConnector>();
 
             _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
+
+            _activeCommand = _droneWriter.Data.ActiveCommand;
         }
 
         float? resourceCollectionTimer = null;
@@ -75,9 +85,9 @@ namespace BetaApartUranus
             // If the drone has a command it's actively working on, perform any work
             // related to that command. Otherwise, if there's a command in the queue,
             // make it the active command.
-            if (_droneWriter.Data.ActiveCommand.HasValue)
+            if (_activeCommand.HasValue)
             {
-                var command = _droneWriter.Data.ActiveCommand.Value;
+                var command = _activeCommand.Value;
                 switch (command.Type)
                 {
                     case CommandType.MoveToPosition:
@@ -113,10 +123,7 @@ namespace BetaApartUranus
                             });
 
                             // Clear the active command.
-                            _droneWriter.SendUpdate(new Drone.Update
-                            {
-                                ActiveCommand = null,
-                            });
+                            _activeCommand = null;
                         }
 
                         break;
@@ -167,19 +174,15 @@ namespace BetaApartUranus
                                 if (resourceNodeComponent.Quantity <= 0)
                                 {
                                     // Clear the active command.
-                                    _droneWriter.SendUpdate(new Drone.Update
-                                    {
-                                        ActiveCommand = null,
-                                    });
+                                    _activeCommand = null;
                                 }
-                            } else {
+                            }
+                            else
+                            {
                                 Debug.LogError($"No target entity with ID {harvestResourceNode.Target}");
 
                                 // Clear the active command.
-                                _droneWriter.SendUpdate(new Drone.Update
-                                {
-                                    ActiveCommand = null,
-                                });
+                                _activeCommand = null;
                             }
                         }
 
@@ -189,30 +192,35 @@ namespace BetaApartUranus
                         Debug.LogWarning($"Unable to perform unknown command {command.Type}, discarding active command");
 
                         // Discard the active command,
-                        _droneWriter.SendUpdate(new Drone.Update
-                        {
-                            ActiveCommand = null,
-                        });
+                        _activeCommand = null;
 
                         break;
                 }
             }
             else if (_droneWriter.Data.CommandQueue.Count > 0)
             {
-                var active = _droneWriter.Data.CommandQueue[0];
-                Debug.Log($"Making command {active.Type} active for drone {_linkedEntity.EntityId}");
+                _activeCommand = _droneWriter.Data.CommandQueue[0];
+                Debug.Log($"Making command {_activeCommand} active for drone {_linkedEntity.EntityId}");
 
                 var commands = new List<Command>(_droneWriter.Data.CommandQueue);
                 commands.RemoveAt(0);
 
                 _droneWriter.SendUpdate(new Drone.Update
                 {
-                    ActiveCommand = active,
                     CommandQueue = commands,
                 });
             }
 
             transform.position = _positionWriter.Data.Coords.ToUnityVector() + _connector.Worker.Origin;
+
+            // TODO: Use regular == operator once SpatialOS generates the necessary code.
+            if (!_activeCommand.Equals(_droneWriter.Data.ActiveCommand))
+            {
+                _droneWriter.SendUpdate(new Drone.Update
+                {
+                    ActiveCommand = _activeCommand,
+                });
+            }
         }
 
         private void OnDrawGizmos()
