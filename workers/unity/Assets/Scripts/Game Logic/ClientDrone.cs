@@ -31,7 +31,7 @@ namespace BetaApartUranus
         private MeshRenderer _display;
 
         // Global state objects.
-        private UnityClientConnector _connector;
+        private LinkedEntityComponent _linkedEntity;
         private AuthoritativePlayer _player;
 
         // State data.
@@ -52,7 +52,7 @@ namespace BetaApartUranus
             // TODO: Is there a better way to check if the drone is owned by the
             //       current worker? It seems odd to have a reference to the connector
             //       object just to fetch the worker ID.
-            get { return Owner == _connector.Worker.WorkerId; }
+            get { return Owner == _linkedEntity.Worker.Connection.GetWorkerId(); }
         }
 
         public string Owner
@@ -76,7 +76,7 @@ namespace BetaApartUranus
         private void OnEnable()
         {
             _display = GetComponentInChildren<MeshRenderer>();
-            _connector = FindObjectOfType<UnityClientConnector>();
+            _linkedEntity = GetComponent<LinkedEntityComponent>();
             _player = FindObjectOfType<AuthoritativePlayer>();
 
             _player.SelectedDroneChanged += OnSelectedDroneChanged;
@@ -91,7 +91,7 @@ namespace BetaApartUranus
 
         private void Update()
         {
-            transform.position = _positionReader.Data.Coords.ToUnityVector() + _connector.Worker.Origin;
+            transform.position = _positionReader.Data.Coords.ToUnityVector() + _linkedEntity.Worker.Origin;
         }
 
         private void OnDestroy()

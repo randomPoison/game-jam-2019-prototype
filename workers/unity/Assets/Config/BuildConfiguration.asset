@@ -82,7 +82,8 @@ MonoBehaviour:
         Enabled: 0
         Required: 0
   - WorkerType: MobileClient
-    ScenesForWorker: []
+    ScenesForWorker:
+    - {fileID: 102900000, guid: f99fecfd62e36f24ea4bb53d782a481e, type: 3}
     LocalBuildConfig:
       BuildTargets:
       - Options: 0

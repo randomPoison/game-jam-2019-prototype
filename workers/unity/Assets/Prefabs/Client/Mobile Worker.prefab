@@ -15,6 +15,10 @@ MonoBehaviour:
   MaxConnectionAttempts: 3
   IpAddress: 
   ShouldConnectLocally: 0
+  _authPlayerPrefab: {fileID: 3969891833849838585, guid: 0a95e66b587f4f64da0b13866d9f63eb,
+    type: 3}
+  _nonAuthPlayerPrefab: {fileID: 5626137673340951648, guid: 5ddb922cea011104f8e9d2fca65bfc5e,
+    type: 3}
 --- !u!1001 &2976193964116501471
 PrefabInstance:
   m_ObjectHideFlags: 0
