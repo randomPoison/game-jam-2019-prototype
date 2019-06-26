@@ -67,8 +67,8 @@ namespace BetaApartUranus
                     Target = clientResourceNode.EntityId.Id,
                 };
 
-                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(moveCommand));
-                AddCommandToQueue(CommandType.HarvestResourceNode, JsonUtility.ToJson(harvestCommand));
+                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(moveCommand), 5);
+                AddCommandToQueue(CommandType.HarvestResourceNode, JsonUtility.ToJson(harvestCommand), 5);
             }
             else
             {
@@ -76,7 +76,7 @@ namespace BetaApartUranus
             }
         }
 
-        private void AddCommandToQueue(CommandType type, string json)
+        private void AddCommandToQueue(CommandType type, string json, int remainingTries)
         {
             _droneSender.SendAddCommandCommand(
                 _selectedDrone.EntityId,
@@ -85,11 +85,16 @@ namespace BetaApartUranus
                 {
                     if (response.StatusCode != StatusCode.Success)
                     {
-                        Debug.Log($"Failed to add {type} drone command");
+                        Debug.Log($"Failed to add {type} drone command: {response.StatusCode}");
+
+                        if (response.StatusCode == StatusCode.Timeout && remainingTries > 0)
+                        {
+                            AddCommandToQueue(type, json, remainingTries - 1);
+                        }
                         return;
                     }
 
-                    Debug.Log("Added {type} drone command successfully!");
+                    Debug.Log($"Added {type} drone command successfully!");
                 });
         }
 
@@ -156,7 +161,7 @@ namespace BetaApartUranus
                     Target = _cursorGridPosition,
                 };
 
-                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(command));
+                AddCommandToQueue(CommandType.MoveToPosition, JsonUtility.ToJson(command), 5);
             }
         }
 
