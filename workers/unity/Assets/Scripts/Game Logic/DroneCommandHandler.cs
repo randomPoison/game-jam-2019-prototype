@@ -22,6 +22,9 @@ namespace BetaApartUranus
         private const float UPDATE_INTERVAL = 1f;
 
         [Require]
+        private EntityId _entityId;
+
+        [Require]
         private PositionWriter _positionWriter = null;
 
         [Require]
@@ -33,13 +36,14 @@ namespace BetaApartUranus
         [Require]
         private PlayerInventoryWriter _inventoryWriter = null;
 
-        private UnityGameLogicConnector _connector;
         private LinkedEntityComponent _linkedEntity;
 
         private Vector2 _position;
         private Command? _activeCommand = null;
         private float _timeToNextUpdate;
         float? resourceCollectionTimer = null;
+
+        private PlayerInventory.Component _inventory;
 
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
         {
@@ -74,7 +78,6 @@ namespace BetaApartUranus
         private void OnEnable()
         {
             _linkedEntity = GetComponent<LinkedEntityComponent>();
-            _connector = FindObjectOfType<UnityGameLogicConnector>();
 
             _commandReceiver.OnAddCommandRequestReceived += OnAddCommandRequest;
 
@@ -150,18 +153,11 @@ namespace BetaApartUranus
                                 switch (resourceNodeComponent.Type)
                                 {
                                     case ResourceType.Coal:
-                                        _inventoryWriter.SendUpdate(new PlayerInventory.Update()
-                                        {
-                                            Coal = _inventoryWriter.Data.Coal + harvestedQuantity
-                                        });
-
+                                        _inventory.Coal += harvestedQuantity;
                                         break;
 
                                     case ResourceType.Copper:
-                                        _inventoryWriter.SendUpdate(new PlayerInventory.Update()
-                                        {
-                                            Copper = _inventoryWriter.Data.Copper + harvestedQuantity
-                                        });
+                                        _inventory.Copper += harvestedQuantity;
                                         break;
                                 }
 
@@ -173,7 +169,7 @@ namespace BetaApartUranus
                             }
                             else
                             {
-                                Debug.LogError($"No target entity with ID {harvestResourceNode.Target}");
+                                Debug.Log($"Target resource node {harvestResourceNode.Target} doesn't exist, cancelling command");
 
                                 // Clear the active command.
                                 _activeCommand = null;
@@ -205,7 +201,8 @@ namespace BetaApartUranus
                 });
             }
 
-            transform.position = _positionWriter.Data.Coords.ToUnityVector() + _connector.Worker.Origin;
+            var worldPosition = new Vector3(_position.x, 0f, _position.y);
+            transform.position = worldPosition + _linkedEntity.Worker.Origin;
 
             // TODO: Use regular == operator once SpatialOS generates the necessary code.
             if (!_activeCommand.Equals(_droneWriter.Data.ActiveCommand))
@@ -216,15 +213,32 @@ namespace BetaApartUranus
                 });
             }
 
-            _timeToNextUpdate -= Time.deltaTime;
-            var worldPosition = new Vector3(_position.x, 0f, _position.y);
-            if (_timeToNextUpdate < 0f && !worldPosition.Equals(_positionWriter.Data.Coords))
-            {
-                _positionWriter.SendUpdate(new Position.Update
-                {
-                    Coords = new Coordinates(worldPosition.x, worldPosition.y, worldPosition.z),
-                });
 
+            // Periodically send updates to components that are rate-limited by time.
+            _timeToNextUpdate -= Time.deltaTime;
+            if (_timeToNextUpdate < 0f)
+            {
+                // Check for updates to the position component.
+                if (_timeToNextUpdate < 0f && !worldPosition.Equals(_positionWriter.Data.Coords))
+                {
+                    _positionWriter.SendUpdate(new Position.Update
+                    {
+                        Coords = new Coordinates(worldPosition.x, worldPosition.y, worldPosition.z),
+                    });
+                }
+
+                // Check for updates to the inventory.
+                if (_timeToNextUpdate < 0f && _inventory.IsDataDirty())
+                {
+                    _inventoryWriter.SendUpdate(new PlayerInventory.Update
+                    {
+                        Coal = _inventory.Coal,
+                        Copper = _inventory.Copper,
+                    });
+                    _inventory.MarkDataClean();
+                }
+
+                // Reset the time to the next update.
                 _timeToNextUpdate = UPDATE_INTERVAL;
             }
         }
