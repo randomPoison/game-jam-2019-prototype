@@ -18,7 +18,7 @@
   "bridge": {
     "worker_attribute_set": {
       "attributes": [
-        "AndroidClient"
+        "MobileClient"
       ]
     },
     "entity_interest": {
@@ -38,7 +38,7 @@
         "command": "echo",
         "arguments": [
           "+workerType",
-          "AndroidClient",
+          "MobileClient",
           "This worker can only be run on Android."
         ]
       },
@@ -46,7 +46,7 @@
         "command": "echo",
         "arguments": [
           "+workerType",
-          "AndroidClient",
+          "MobileClient",
           "This worker can only be run on Android."
         ]
       }

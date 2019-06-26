@@ -32,7 +32,7 @@ namespace BetaApartUranus
 
             entityTemplate.AddComponent(new Metadata.Snapshot("Drone"), WorkerUtils.UnityGameLogic);
             entityTemplate.AddComponent(new Persistence.Snapshot(), WorkerUtils.UnityGameLogic);
-            entityTemplate.SetReadAccess(WorkerUtils.UnityGameLogic, WorkerUtils.UnityClient);
+            entityTemplate.SetReadAccess(WorkerUtils.AllWorkers);
             entityTemplate.SetComponentWriteAccess(EntityAcl.ComponentId, WorkerUtils.UnityGameLogic);
 
             return entityTemplate;
