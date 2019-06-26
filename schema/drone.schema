@@ -1,16 +1,16 @@
 package beta_apart_uranus;
 
+import "improbable/gdk/core/common.schema";
+
 component Drone {
     id = 98938715;
 
     string owner = 1;
-    list<Command> command_queue = 2;
     option<Command> active_command = 3;
 
-    command AddCommandResponse add_command(Command);
+    command DroneCommandQueue get_command_queue(improbable.gdk.core.Empty);
+    command improbable.gdk.core.Empty add_command(Command);
 }
-
-type AddCommandResponse {}
 
 type Command {
     CommandType type = 1;
@@ -20,4 +20,8 @@ type Command {
 enum CommandType {
     MoveToPosition = 0;
     HarvestResourceNode = 1;
+}
+
+type DroneCommandQueue {
+    list<Command> commands = 1;
 }
