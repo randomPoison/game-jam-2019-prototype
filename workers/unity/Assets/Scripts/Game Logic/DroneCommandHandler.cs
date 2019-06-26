@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using BetaApartUranus.DroneCommands;
 using HexTools;
 using Improbable;
@@ -44,6 +45,7 @@ namespace BetaApartUranus
         float? resourceCollectionTimer = null;
 
         private PlayerInventory.Component _inventory;
+        private List<Command> _commandQueue;
 
         private void OnAddCommandRequest(Drone.AddCommand.ReceivedRequest request)
         {
@@ -63,12 +65,7 @@ namespace BetaApartUranus
             Debug.Log($"Handling add command request {request.EntityId} from {request.CallerWorkerId}");
 
             // Update the list of commands on the drone.
-            var updatedQueue = new List<Command>(_droneWriter.Data.CommandQueue);
-            updatedQueue.Add(request.Payload);
-            _droneWriter.SendUpdate(new Drone.Update
-            {
-                CommandQueue = updatedQueue,
-            });
+            _commandQueue.Add(request.Payload);
 
             // Send the success response.
             _commandReceiver.SendAddCommandResponse(request.RequestId, new AddCommandResponse());
@@ -84,6 +81,7 @@ namespace BetaApartUranus
             var worldPosition = _positionWriter.Data.Coords.ToUnityVector();
             _position = new Vector2(worldPosition.x, worldPosition.z);
             _activeCommand = _droneWriter.Data.ActiveCommand;
+            _commandQueue = new List<Command>(_droneWriter.Data.CommandQueue);
             _timeToNextUpdate = UPDATE_INTERVAL;
         }
 
@@ -187,32 +185,16 @@ namespace BetaApartUranus
                         break;
                 }
             }
-            else if (_droneWriter.Data.CommandQueue.Count > 0)
+            else if (_commandQueue.Count > 0)
             {
-                _activeCommand = _droneWriter.Data.CommandQueue[0];
+                _activeCommand = _commandQueue[0];
+                _commandQueue.RemoveAt(0);
+
                 Debug.Log($"Making command {_activeCommand} active for drone {_linkedEntity.EntityId}");
-
-                var commands = new List<Command>(_droneWriter.Data.CommandQueue);
-                commands.RemoveAt(0);
-
-                _droneWriter.SendUpdate(new Drone.Update
-                {
-                    CommandQueue = commands,
-                });
             }
 
             var worldPosition = new Vector3(_position.x, 0f, _position.y);
             transform.position = worldPosition + _linkedEntity.Worker.Origin;
-
-            // TODO: Use regular == operator once SpatialOS generates the necessary code.
-            if (!_activeCommand.Equals(_droneWriter.Data.ActiveCommand))
-            {
-                _droneWriter.SendUpdate(new Drone.Update
-                {
-                    ActiveCommand = _activeCommand,
-                });
-            }
-
 
             // Periodically send updates to components that are rate-limited by time.
             _timeToNextUpdate -= Time.deltaTime;
@@ -236,6 +218,28 @@ namespace BetaApartUranus
                         Copper = _inventory.Copper,
                     });
                     _inventory.MarkDataClean();
+                }
+
+                // Track drone updates.
+                var droneUpdate = new Drone.Update();
+                var droneDirty = false;
+
+                // TODO: Use regular == operator once SpatialOS generates the necessary code.
+                if (!_activeCommand.Equals(_droneWriter.Data.ActiveCommand))
+                {
+                    droneUpdate.ActiveCommand = _activeCommand;
+                    droneDirty = true;
+                }
+
+                if (!_commandQueue.SequenceEqual(_droneWriter.Data.CommandQueue))
+                {
+                    droneUpdate.CommandQueue = _commandQueue;
+                    droneDirty = true;
+                }
+
+                if (droneDirty)
+                {
+                    _droneWriter.SendUpdate(droneUpdate);
                 }
 
                 // Reset the time to the next update.
