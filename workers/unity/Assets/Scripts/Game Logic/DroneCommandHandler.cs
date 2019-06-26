@@ -5,8 +5,9 @@ using HexTools;
 using Improbable;
 using Improbable.Gdk.Core;
 using Improbable.Gdk.Subscriptions;
-using Unity.Entities;
+using Improbable.Worker.CInterop;
 using UnityEngine;
+using Entity = Unity.Entities.Entity;
 
 namespace BetaApartUranus
 {
@@ -198,7 +199,7 @@ namespace BetaApartUranus
 
             // Periodically send updates to components that are rate-limited by time.
             _timeToNextUpdate -= Time.deltaTime;
-            if (_timeToNextUpdate < 0f)
+            if (_timeToNextUpdate < 0f || _droneWriter.Authority == Authority.AuthorityLossImminent)
             {
                 // Check for updates to the position component.
                 if (_timeToNextUpdate < 0f && !worldPosition.Equals(_positionWriter.Data.Coords))
